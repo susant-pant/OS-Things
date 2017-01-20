@@ -63,13 +63,13 @@ void kosMain() {
 #if TESTING_KEYCODE_LOOP
   Thread* t = Thread::create()->setPriority(topPriority);
   Machine::setAffinity(*t, 0);
-  //t->start((ptr_t)keybLoop);
+  t->start((ptr_t)keybLoop);
 #endif
   Thread::create()->start((ptr_t)UserMain);
 #if TESTING_PING_LOOP
   for (;;) {
     Timeout::sleep(Clock::now() + 1000);
-  //  KOUT::outl("...ping...");
+    KOUT::outl("...ping...");
   }
 #endif
 }
