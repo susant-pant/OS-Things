@@ -150,6 +150,25 @@ extern "C" int _munmap(void* addr, size_t len) {
   return 0;
 }
 
+/*
+sched_setaffinity sets the affinity of the calling process to only those cores
+specified by the mask. Suppose the mask value is 0x11. Then, after the
+sched_setaffinity call, the calling process must be scheduled only on cores 0 and 1
+*/
+extern "C" int sched_setaffinity(pid_t pid, size_t cpusetsize, cpu_set_t *mask){
+  //do things
+}
+
+/*
+sched_getaffinity sets the value of the mask pointer to the affinity of the
+calling process. (You have to modify Scheduler::preempt() so that the kernel 
+schedules a process only on those processor cores that are allowed by the
+mask set by the process.)
+*/
+extern "C" int sched_getaffinity(pid_t pid, size_t cpusetsize, cpu_set_t *mask){
+  //do things
+}
+
 extern "C" pthread_t _pthread_create(funcvoid2_t invoke, funcvoid1_t func, void* data) {
   return CurrProcess().createThread(invoke, func, data);
 }

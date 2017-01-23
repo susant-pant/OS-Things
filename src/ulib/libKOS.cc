@@ -99,6 +99,14 @@ extern "C" int munmap(void* addr, size_t len) {
   if (ret < 0) { *__errno() = -ret; return -1; } else return ret;
 }
 
+extern "C" int sched_setaffinity(pid_t pid, size_t cpusetsize, cpu_set_t *mask){
+  return syscallStub(SyscallNum::sched_setaffinity)
+}
+
+extern "C" int sched_getaffinity(pid_t pid, size_t cpusetsize, cpu_set_t *mask){
+  return syscallStub(SyscallNum::sched_getaffinity)
+}
+
 extern "C" int privilege(void* func, mword a1, mword a2, mword a3, mword a4) {
   return syscallStub(SyscallNum::privilege, (mword)func, a1, a2, a3, a4);
 }

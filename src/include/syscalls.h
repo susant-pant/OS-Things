@@ -36,6 +36,8 @@ enum : mword {
   usleep,
   _mmap,
   _munmap,
+  sched_setaffinity
+  sched_getaffinity
   _pthread_create,
   pthread_exit,
   pthread_join,
