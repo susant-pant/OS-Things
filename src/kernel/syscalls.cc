@@ -156,7 +156,7 @@ specified by the mask. Suppose the mask value is 0x11. Then, after the
 sched_setaffinity call, the calling process must be scheduled only on cores 0 and 1
 */
 extern "C" int sched_setaffinity(pid_t pid, size_t cpusetsize, cpu_set_t *mask){
-  //do things
+  return 1;
 }
 
 /*
@@ -166,7 +166,7 @@ schedules a process only on those processor cores that are allowed by the
 mask set by the process.)
 */
 extern "C" int sched_getaffinity(pid_t pid, size_t cpusetsize, cpu_set_t *mask){
-  //do things
+  return 1;
 }
 
 extern "C" pthread_t _pthread_create(funcvoid2_t invoke, funcvoid1_t func, void* data) {
@@ -265,6 +265,8 @@ void* __dso_handle = nullptr;
 typedef ssize_t (*syscall_t)(mword a1, mword a2, mword a3, mword a4, mword a5);
 static const syscall_t syscalls[] = {
   syscall_t(_exit),
+  syscall_t(sched_setaffinity),
+  syscall_t(sched_getaffinity),
   syscall_t(open),
   syscall_t(close),
   syscall_t(read),

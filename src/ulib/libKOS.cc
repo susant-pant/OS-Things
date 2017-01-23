@@ -100,11 +100,11 @@ extern "C" int munmap(void* addr, size_t len) {
 }
 
 extern "C" int sched_setaffinity(pid_t pid, size_t cpusetsize, cpu_set_t *mask){
-  return syscallStub(SyscallNum::sched_setaffinity)
+  return syscallStub(SyscallNum::sched_setaffinityEnum);
 }
 
 extern "C" int sched_getaffinity(pid_t pid, size_t cpusetsize, cpu_set_t *mask){
-  return syscallStub(SyscallNum::sched_getaffinity)
+  return syscallStub(SyscallNum::sched_getaffinityEnum);
 }
 
 extern "C" int privilege(void* func, mword a1, mword a2, mword a3, mword a4) {
