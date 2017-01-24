@@ -50,7 +50,7 @@ int main() {
    cout << "Test process is running on core "<< getcid() << endl; 
  
    /* sched_setaffinity */
-/*
+
    cout << endl << "SCHED_SETAFFINITY TEST 1" << endl;
    err = 5;
    affinityMask = MASK6;
@@ -74,7 +74,6 @@ int main() {
       //cout << "sched_setaffinity successful" << endl; 
    	whereAmI();
    }
-*/
 
    cout << endl << "SCHED_SETAFFINITY TEST 3" << endl;
    err = 5;

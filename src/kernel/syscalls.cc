@@ -156,13 +156,18 @@ specified by the mask.
 */
 extern "C" int sched_setaffinity(pid_t pid, size_t cpusetsize, cpu_set_t* mask){
   //Only accepted value for the first argument pid is 0. Any other value leads to EPERM error.
-  if (pid != 0)
-    return -1;
-  //Trying to set the bit of of a non-existent processor (core) leads to EINVAL error. The default
-  //  configuration is to run KOS with 4 cores.
-  if (*mask > 15){
+  if (pid != 0){
+    KOUT::outl("ERROR: EPERM");
     return -1;
   }
+
+  //Trying to set the bit of of a non-existent processor (core) leads to EINVAL error. The default
+  //  configuration is to run KOS with 4 cores.
+  if (*mask > ((Machine::getProcessorCount() * 4) - 1)){
+    KOUT::outl("ERROR: EINVAL");
+    return -1;
+  }
+  LocalProcessor::getCurrThread()->setAffinityMask(*mask);
   return 0;
 }
 
@@ -174,9 +179,11 @@ mask set by the process.)
 */
 extern "C" int sched_getaffinity(pid_t pid, size_t cpusetsize, cpu_set_t *mask){
   //Only accepted value for the first argument pid is 0. Any other value leads to EPERM error.
-  if (pid != 0)
+  if (pid != 0){
+    KOUT::outl("ERROR: EPERM");
     return -1;
-
+  }
+  *mask = LocalProcessor::getCurrThread()->getAffinityMask();
   return 0;
 }
 
