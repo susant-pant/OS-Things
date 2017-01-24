@@ -44,13 +44,16 @@ void printAffinity( cpu_set_t affinityMask ){
 }
 
 int main() {
+   cpu_set_t affinityMask;
+   int err;
 
-   int err=5;
    cout << "Test process is running on core "<< getcid() << endl; 
  
    /* sched_setaffinity */
+/*
    cout << endl << "SCHED_SETAFFINITY TEST 1" << endl;
-   cpu_set_t affinityMask = MASK6;
+   err = 5;
+   affinityMask = MASK6;
    //cout << "Setting Mask to "<< affinityMask << " for pid 0 "<< endl; 
    err = sched_setaffinity( 0, sizeof(cpu_set_t), &affinityMask );
    if( err == -1 ){
@@ -71,6 +74,7 @@ int main() {
       //cout << "sched_setaffinity successful" << endl; 
    	whereAmI();
    }
+*/
 
    cout << endl << "SCHED_SETAFFINITY TEST 3" << endl;
    err = 5;
@@ -84,7 +88,7 @@ int main() {
    	whereAmI();
 	}
 
-
+/*
    cout << endl << "SCHED_SETAFFINITY TEST 4" << endl;
    err = 5;
    affinityMask = MASK5;
@@ -102,7 +106,8 @@ int main() {
    whereAmI();
    whereAmI();
 
-   /* sched_getaffinity */
+   /* sched_getaffinity 
+
    cout << endl << "SCHED_GETAFFINITY TEST 1" << endl;
    err = 5;
    err = sched_getaffinity( 2, sizeof(cpu_set_t), &affinityMask );
@@ -111,7 +116,6 @@ int main() {
    }else{
   		printAffinity(affinityMask);
    }
-
     
    cout << endl << "SCHED_GETAFFINITY TEST 2" << endl;
    err = 5;
@@ -121,6 +125,7 @@ int main() {
    }else{
   		printAffinity(affinityMask);
    }
+   */
 #if 0
 #endif
 }

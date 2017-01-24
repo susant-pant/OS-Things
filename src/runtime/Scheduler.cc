@@ -134,7 +134,12 @@ void Scheduler::preempt() {               // IRQs disabled, lock count inflated
       * specified target's ready queue
       */
       // ok i'll try
-      
+      //check every bit in affinity mask
+        //if bit i is set, get the scheduler for that core
+          //Scheduler *sched = Machine::getScheduler(i)
+        //For all set bits, assign the process to the core with the smallest ready queue
+          //Queue size: sched->readyCount
+          //Assignment: target = sched
    }
 
 #if TESTING_ALWAYS_MIGRATE

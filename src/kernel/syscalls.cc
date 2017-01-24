@@ -154,14 +154,13 @@ extern "C" int _munmap(void* addr, size_t len) {
 sched_setaffinity sets the affinity of the calling process to only those cores
 specified by the mask.
 */
-extern "C" int sched_setaffinity(pid_t pid, size_t cpusetsize, cpu_set_t *mask){
+extern "C" int sched_setaffinity(pid_t pid, size_t cpusetsize, cpu_set_t* mask){
   //Only accepted value for the first argument pid is 0. Any other value leads to EPERM error.
-  if (pid != 0){
+  if (pid != 0)
     return -1;
-  }
   //Trying to set the bit of of a non-existent processor (core) leads to EINVAL error. The default
   //  configuration is to run KOS with 4 cores.
-  if ((mask >> 4) != 0x0){
+  if (*mask > 15){
     return -1;
   }
   return 0;
@@ -175,9 +174,9 @@ mask set by the process.)
 */
 extern "C" int sched_getaffinity(pid_t pid, size_t cpusetsize, cpu_set_t *mask){
   //Only accepted value for the first argument pid is 0. Any other value leads to EPERM error.
-  if (pid != 0){
+  if (pid != 0)
     return -1;
-  }
+
   return 0;
 }
 
