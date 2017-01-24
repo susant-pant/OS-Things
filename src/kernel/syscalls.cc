@@ -1,5 +1,5 @@
 /******************************************************************************
-    Copyright © 2012-2015 Martin Karsten
+    Copyright Â© 2012-2015 Martin Karsten
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -152,11 +152,19 @@ extern "C" int _munmap(void* addr, size_t len) {
 
 /*
 sched_setaffinity sets the affinity of the calling process to only those cores
-specified by the mask. Suppose the mask value is 0x11. Then, after the
-sched_setaffinity call, the calling process must be scheduled only on cores 0 and 1
+specified by the mask.
 */
 extern "C" int sched_setaffinity(pid_t pid, size_t cpusetsize, cpu_set_t *mask){
-  return 1;
+  //Only accepted value for the first argument pid is 0. Any other value leads to EPERM error.
+  if (pid != 0){
+    return -1;
+  }
+  //Trying to set the bit of of a non-existent processor (core) leads to EINVAL error. The default
+  //  configuration is to run KOS with 4 cores.
+  if ((mask >> 4) != 0x0){
+    return -1;
+  }
+  return 0;
 }
 
 /*
@@ -166,7 +174,11 @@ schedules a process only on those processor cores that are allowed by the
 mask set by the process.)
 */
 extern "C" int sched_getaffinity(pid_t pid, size_t cpusetsize, cpu_set_t *mask){
-  return 1;
+  //Only accepted value for the first argument pid is 0. Any other value leads to EPERM error.
+  if (pid != 0){
+    return -1;
+  }
+  return 0;
 }
 
 extern "C" pthread_t _pthread_create(funcvoid2_t invoke, funcvoid1_t func, void* data) {
