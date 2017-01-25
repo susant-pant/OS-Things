@@ -155,18 +155,16 @@ void Scheduler::preempt() {               // IRQs disabled, lock count inflated
 
     //so I have affinity mask
     //I check which CPUs were set to 1 in the affinity mask
+
     mword bestRC = 0xFF;    // current best ready count
     int numCores = Machine::getProcessorCount();
 
     for(int i = 0; i < numCores; i++){
-      bool bitIsSet = (affinityMask & (0x1 << i)) != 0;     //isolates bit for each core to see if it is set
 
+      bool bitIsSet = (affinityMask & (0x1 << i)) != 0;     //isolates bit for each core to see if it is set
       if(bitIsSet) {
+
         Scheduler *sched = Machine::getScheduler(i);
-        
-        if (sched == this)
-          readyCount -= 1;
-        
         mword newRC = sched->readyCount;
         if (newRC < bestRC){
           bestRC = newRC;
@@ -175,6 +173,7 @@ void Scheduler::preempt() {               // IRQs disabled, lock count inflated
       }
     }
   }
+
 
 #if TESTING_ALWAYS_MIGRATE
   if (!target) target = partner;

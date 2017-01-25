@@ -19,6 +19,18 @@
 int InitProcess() {
   Process* p0 = knew<Process>();
   p0->exec("schedAffinityTest");
+  Process* p1 = knew<Process>();
+  p1->exec("progA");
+  Process* p2 = knew<Process>();
+  p2->exec("progA");
+  Process* p3 = knew<Process>();
+  p3->exec("progB");
+  Process* p4 = knew<Process>();
+  p4->exec("progB");
+  Process* p5 = knew<Process>();
+  p5->exec("progC");
+  Process* p6 = knew<Process>();
+  p6->exec("progC");
 /*#if !TESTING_KEYCODE_LOOP
   Process* p1 = knew<Process>();
   p1->exec("kbloop");

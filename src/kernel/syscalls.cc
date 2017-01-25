@@ -23,7 +23,7 @@
 #include "machine/Processor.h"
 #include "machine/Machine.h"
 
-
+#include <errno.h>
 #include "syscalls.h"
 #include "pthread.h"
 
@@ -158,7 +158,7 @@ extern "C" int sched_setaffinity(pid_t pid, size_t cpusetsize, cpu_set_t* mask){
   //Only accepted value for the first argument pid is 0. Any other value leads to EPERM error.
   if (pid != 0){
     KOUT::outl("ERROR: EPERM");
-    return -1;
+    return EPERM;
   }
 
   //Trying to set the bit of of a non-existent processor (core) leads to EINVAL error. The default
@@ -166,7 +166,7 @@ extern "C" int sched_setaffinity(pid_t pid, size_t cpusetsize, cpu_set_t* mask){
   int shiftAmount = Machine::getProcessorCount();
   if ((*mask >> shiftAmount) != 0){
     KOUT::outl("ERROR: EINVAL");
-    return -1;
+    return EINVAL;
   }
   LocalProcessor::getCurrThread()->setAffinityMask(*mask);
   //LocalProcessor::getScheduler()->yield();
@@ -183,7 +183,7 @@ extern "C" int sched_getaffinity(pid_t pid, size_t cpusetsize, cpu_set_t *mask){
   //Only accepted value for the first argument pid is 0. Any other value leads to EPERM error.
   if (pid != 0){
     KOUT::outl("ERROR: EPERM");
-    return -1;
+    return EPERM;
   }
   *mask = LocalProcessor::getCurrThread()->getAffinityMask();
 
