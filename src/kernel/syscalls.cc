@@ -155,22 +155,25 @@ sched_setaffinity sets the affinity of the calling process to only those cores
 specified by the mask.
 */
 extern "C" int sched_setaffinity(pid_t pid, size_t cpusetsize, cpu_set_t* mask){
-  //Only accepted value for the first argument pid is 0. Any other value leads to EPERM error.
+  //Checking for EPERM error
+  //Only accepted value for the first argument pid is 0.
   if (pid != 0){
-    KOUT::outl("ERROR: EPERM");
-    return EPERM;
+    KOUT::outl("ERROR: EPERM");   // prints the error source on KOS
+    return EPERM;     // returns error
   }
-
+  //Checking for EINVAL error
   //Trying to set the bit of of a non-existent processor (core) leads to EINVAL error. The default
   //  configuration is to run KOS with 4 cores.
   int shiftAmount = Machine::getProcessorCount();
   if ((*mask >> shiftAmount) != 0){
-    KOUT::outl("ERROR: EINVAL");
-    return EINVAL;
+    KOUT::outl("ERROR: EINVAL");   // prints the error source on KOS
+    return EINVAL;    // returns error
   }
-  LocalProcessor::getCurrThread()->setAffinityMask(*mask);
-  //LocalProcessor::getScheduler()->yield();
-  return 0;
+  
+  //Completely successful
+  LocalProcessor::getCurrThread()->setAffinityMask(*mask);    //sets affinity to mask
+  LocalProcessor::getScheduler()->yield();
+  return 0;   //returns 0 if successful
 }
 
 /*
@@ -180,14 +183,16 @@ schedules a process only on those processor cores that are allowed by the
 mask set by the process.)
 */
 extern "C" int sched_getaffinity(pid_t pid, size_t cpusetsize, cpu_set_t *mask){
-  //Only accepted value for the first argument pid is 0. Any other value leads to EPERM error.
+  //Checking for EPERM error
+  //Only accepted value for the first argument pid is 0.
   if (pid != 0){
-    KOUT::outl("ERROR: EPERM");
-    return EPERM;
+    KOUT::outl("ERROR: EPERM");   // prints the error source on KOS
+    return EPERM;     //returns error
   }
-  *mask = LocalProcessor::getCurrThread()->getAffinityMask();
 
-  return 0;
+  //Completely successful
+  *mask = LocalProcessor::getCurrThread()->getAffinityMask();   //gets affinity of current process
+  return 0;         //returns 0 if successful
 }
 
 extern "C" pthread_t _pthread_create(funcvoid2_t invoke, funcvoid1_t func, void* data) {

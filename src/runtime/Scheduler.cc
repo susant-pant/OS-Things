@@ -127,44 +127,20 @@ void Scheduler::preempt() {               // IRQs disabled, lock count inflated
 	  /* use Martin's code when no affinity is set via bit mask */
 	  target = Runtime::getCurrThread()->getAffinity();
   } else {
-  /* CPSC457l: Add code here to scan the affinity mask
-    * and select the processor with the smallest ready count.
-    * Set the scheduler of the selected processor as target
-    * switchThread(target) migrates the current thread to
-    * specified target's ready queue
-    */
-
-    // ok i'll try
+    mword bestRC = 0xFF; // current best ready count
 
     //check every bit in affinity mask
-      //if bit i is set, get the scheduler for that core
-        //Scheduler *sched = Machine::getScheduler(i)
-      //For all set bits, assign the process to the core with the smallest ready queue
-        //Queue size: sched->readyCount
-        //Assignment: target = sched
-
-    //ok i'll try
-
-    //First, get the affinity of the current running thread
-    //Check which CPUs were set to 1 in the affinity
-    //Among those CPUs set to 1, find the least busy one
-    //  readyCount: the approximate number of threads being served by a processor
-    //Set the target to the *least* busy processor
-
-    //ok i'll try
-
-    //so I have affinity mask
-    //I check which CPUs were set to 1 in the affinity mask
-
-    mword bestRC = 0xFF;    // current best ready count
     int numCores = Machine::getProcessorCount();
-
     for(int i = 0; i < numCores; i++){
 
-      bool bitIsSet = (affinityMask & (0x1 << i)) != 0;     //isolates bit for each core to see if it is set
+      //isolate bits for each core to see if it is set
+      bool bitIsSet = (affinityMask & (0x1 << i)) != 0;
       if(bitIsSet) {
 
+        //if bit i is set, get the scheduler for that core
         Scheduler *sched = Machine::getScheduler(i);
+        
+        //For all set bits, assign the process to the core with the smallest ready queue
         mword newRC = sched->readyCount;
         if (newRC < bestRC){
           bestRC = newRC;
