@@ -33,12 +33,12 @@ void whereAmI(){
    }
 }
 
-void printAffinity( cpu_set_t affinityMask ){
+void printAffinity(cpu_set_t affinityMask){
    mword cpuCount = get_core_count();
-	mword bitmask  = 0x1;
-   for( mword i=0; i<cpuCount; i++ ){
-		if( (affinityMask & (bitmask << i)) != 0 ){
-			cout << "Current process has affinity to core "<<i << endl;
+	mword bitmask = 0x1;
+   for(mword i = 0; i < cpuCount; i++){
+		if((affinityMask & (bitmask << i)) != 0 ){
+			cout << "Current process has affinity to core " << i << endl;
 		}
 	}
 }
@@ -87,7 +87,6 @@ int main() {
    	whereAmI();
 	}
 
-/*
    cout << endl << "SCHED_SETAFFINITY TEST 4" << endl;
    err = 5;
    affinityMask = MASK5;
@@ -105,7 +104,7 @@ int main() {
    whereAmI();
    whereAmI();
 
-   /* sched_getaffinity 
+   /* sched_getaffinity */
 
    cout << endl << "SCHED_GETAFFINITY TEST 1" << endl;
    err = 5;
@@ -124,7 +123,7 @@ int main() {
    }else{
   		printAffinity(affinityMask);
    }
-   */
+
 #if 0
 #endif
 }

@@ -163,11 +163,13 @@ extern "C" int sched_setaffinity(pid_t pid, size_t cpusetsize, cpu_set_t* mask){
 
   //Trying to set the bit of of a non-existent processor (core) leads to EINVAL error. The default
   //  configuration is to run KOS with 4 cores.
-  if (*mask > ((Machine::getProcessorCount() * 4) - 1)){
+  int shiftAmount = Machine::getProcessorCount();
+  if ((*mask >> shiftAmount) != 0){
     KOUT::outl("ERROR: EINVAL");
     return -1;
   }
   LocalProcessor::getCurrThread()->setAffinityMask(*mask);
+  //LocalProcessor::getScheduler()->yield();
   return 0;
 }
 
@@ -184,6 +186,7 @@ extern "C" int sched_getaffinity(pid_t pid, size_t cpusetsize, cpu_set_t *mask){
     return -1;
   }
   *mask = LocalProcessor::getCurrThread()->getAffinityMask();
+
   return 0;
 }
 

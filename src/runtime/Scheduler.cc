@@ -19,6 +19,7 @@
 #include "runtime/Stack.h"
 #include "runtime/Thread.h"
 #include "kernel/Output.h"
+#include <iostream>
 
 Scheduler::Scheduler() : readyCount(0), preemption(0), resumption(0), partner(this) {
   Thread* idleThread = Thread::create((vaddr)idleStack, minimumStack);
@@ -45,8 +46,7 @@ inline void Scheduler::switchThread(Scheduler* target, Args&... a) {
   Thread* nextThread;
   readyLock.acquire();
 //  for (mword i = 0; i < (target ? idlePriority : maxPriority); i += 1) {
-  for (mword i = 0; i < ((target == this) ? idlePriority : maxPriority);
-i += 1) {
+  for (mword i = 0; i < ((target == this) ? idlePriority : maxPriority); i += 1) {
     if (!readyQueue[i].empty()) {
       nextThread = readyQueue[i].pop_front();
       readyCount -= 1;
@@ -123,24 +123,58 @@ void Scheduler::preempt() {               // IRQs disabled, lock count inflated
   Scheduler *target = nullptr;
   mword affinityMask = Runtime::getCurrThread()->getAffinityMask();
 
-  if( affinityMask == 0 ) {
+  if(affinityMask == 0){
 	  /* use Martin's code when no affinity is set via bit mask */
-	  target =  Runtime::getCurrThread()->getAffinity();
-   }  else {
-	  /* CPSC457l: Add code here to scan the affinity mask
-      * and select the processor with the smallest ready count.
-      * Set the scheduler of the selected processor as target
-      * switchThread(target) migrates the current thread to
-      * specified target's ready queue
-      */
-      // ok i'll try
-      //check every bit in affinity mask
-        //if bit i is set, get the scheduler for that core
-          //Scheduler *sched = Machine::getScheduler(i)
-        //For all set bits, assign the process to the core with the smallest ready queue
-          //Queue size: sched->readyCount
-          //Assignment: target = sched
-   }
+	  target = Runtime::getCurrThread()->getAffinity();
+  } else {
+  /* CPSC457l: Add code here to scan the affinity mask
+    * and select the processor with the smallest ready count.
+    * Set the scheduler of the selected processor as target
+    * switchThread(target) migrates the current thread to
+    * specified target's ready queue
+    */
+
+    // ok i'll try
+
+    //check every bit in affinity mask
+      //if bit i is set, get the scheduler for that core
+        //Scheduler *sched = Machine::getScheduler(i)
+      //For all set bits, assign the process to the core with the smallest ready queue
+        //Queue size: sched->readyCount
+        //Assignment: target = sched
+
+    //ok i'll try
+
+    //First, get the affinity of the current running thread
+    //Check which CPUs were set to 1 in the affinity
+    //Among those CPUs set to 1, find the least busy one
+    //  readyCount: the approximate number of threads being served by a processor
+    //Set the target to the *least* busy processor
+
+    //ok i'll try
+
+    //so I have affinity mask
+    //I check which CPUs were set to 1 in the affinity mask
+    mword bestRC = 0xFF;    // current best ready count
+    int numCores = Machine::getProcessorCount();
+
+    for(int i = 0; i < numCores; i++){
+      bool bitIsSet = (affinityMask & (0x1 << i)) != 0;     //isolates bit for each core to see if it is set
+
+      if(bitIsSet) {
+        Scheduler *sched = Machine::getScheduler(i);
+        
+        if (sched == this)
+          readyCount -= 1;
+        
+        mword newRC = sched->readyCount;
+        if (newRC < bestRC){
+          bestRC = newRC;
+          target = sched;
+        }
+      }
+    }
+  }
 
 #if TESTING_ALWAYS_MIGRATE
   if (!target) target = partner;
